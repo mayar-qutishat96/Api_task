@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Pokemon</title>
+    <style>
+      
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+      
+        .pokemon-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pokemon-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        img {
+            width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="pokemon-container" id="pokemon-container">
+    </div>
+
+    <script>
+        'use strict'
+
+        let apiURL = "https://pokeapi.co/api/v2/pokemon?limit=1000"; 
+
+        fetch(apiURL).then(response => {
+            return response.json();
+        }).then(data => {
+            console.log(data);
+            
+            const pokemonContainer = document.getElementById('pokemon-container');
+            
+            data.results.forEach(pokemon => {
+                fetch(pokemon.url).then(response => {
+                    return response.json();
+                }).then(pokemonData => {
+                    console.log(pokemonData);
+
+                    let pokemonCard = document.createElement('div');
+                    pokemonCard.classList.add('pokemon-card');
+
+                    let pokemonName = pokemonData.name;
+                    let pokemonImage = pokemonData.sprites.other['official-artwork'].front_default;
+                    let abilities = pokemonData.abilities.map(ability => ability.ability.name).join(', ');
+
+                    let nameElement = document.createElement('h2');
+                    nameElement.textContent = `Name:${pokemonName}`;
+
+                    let imageElement = document.createElement('img');
+                    imageElement.src = pokemonImage;
+                    imageElement.alt = pokemonName;
+
+                    let abilitiesElement = document.createElement('h3');
+                    abilitiesElement.textContent = `Abilities: ${abilities}`;
+
+                    pokemonCard.appendChild(nameElement);
+                    pokemonCard.appendChild(imageElement);
+                    pokemonCard.appendChild(abilitiesElement);
+
+                    pokemonContainer.appendChild(pokemonCard);
+                })
+            });
+        })
+    </script>
+
+</body>
+</html>
